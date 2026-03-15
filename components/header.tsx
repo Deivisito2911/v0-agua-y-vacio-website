@@ -8,123 +8,112 @@ import { Menu, X } from 'lucide-react'
 
 const menuItems = [
   { name: 'Inicio', href: '#inicio' },
-  { name: 'Sobre Mí', href: '#sobre-mi' }, // Cambiado a sin tilde para el ID
+  { name: 'Sobre Mí', href: '#sobre-mi' },
   { name: 'Obras', href: '#obras' },
   { name: 'Talleres', href: '#talleres' },
   { name: 'Contacto', href: '#contacto' },
 ]
+
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  // Controlar el cambio de estado al hacer scroll para efectos de transparencia
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
-    }
+    const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
+    
+    // Bloquear scroll cuando el menú móvil está abierto
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isOpen])
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
         scrolled 
-          ? 'bg-white/80 backdrop-blur-md py-3 shadow-sm border-b border-gray-100' 
+          ? 'bg-white/90 backdrop-blur-md py-3 border-b border-gray-100 shadow-sm' 
           : 'bg-transparent py-6'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
         
-        {/* Logo y Marca Personal */}
+        {/* Logo */}
         <Link 
           href="#inicio" 
-          className="flex items-center gap-4 group"
-          onClick={(e) => {
-            e.preventDefault()
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }}
+          className="flex items-center gap-3 group relative z-[110]"
+          onClick={() => setIsOpen(false)}
         >
-          <div className="relative w-10 h-10 overflow-hidden rounded-full border border-gray-200">
+          <div className="relative w-9 h-9 md:w-10 md:h-10 overflow-hidden rounded-full border border-gray-100">
             <Image
               src="/logo.png"
-              alt="Agua y Vacío Logo"
+              alt="Agua y Vacío"
               fill
-              className="object-cover group-hover:scale-110 transition-transform duration-700"
+              className="object-cover"
             />
           </div>
           <div className="flex flex-col">
-            <span className="font-serif text-lg leading-none text-[#1A1A1A] tracking-tight">
+            <span className="font-serif text-base md:text-lg leading-none text-[#1A1A1A] tracking-tight">
               Agua y Vacío
             </span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mt-1">
+            <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-gray-400 mt-1">
               José Bladimir
             </span>
           </div>
         </Link>
 
-        {/* Desktop Menu: Espaciado amplio y tipografía ligera */}
-        <div className="hidden md:flex items-center gap-10">
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-8">
           {menuItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="text-[11px] font-medium tracking-[0.2em] text-[#1A1A1A] hover:text-[#B22222] transition-colors duration-300 uppercase"
+              className="text-[11px] font-medium tracking-[0.2em] text-[#1A1A1A] hover:text-[#B22222] transition-colors uppercase"
             >
               {item.name}
             </Link>
           ))}
         </div>
 
-        {/* Botón Menú Móvil */}
+        {/* Mobile Toggle Button */}
         <button 
-          className="md:hidden p-2 text-[#1A1A1A] hover:bg-gray-50 rounded-full transition-colors"
-          onClick={() => setIsOpen(true)}
-          aria-label="Abrir menú"
+          className="md:hidden relative z-[110] p-2 text-[#1A1A1A]"
+          onClick={() => setIsOpen(!isOpen)}
         >
-          <Menu size={24} strokeWidth={1.2} />
+          {isOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
         </button>
       </div>
 
-      {/* Menú Móvil Full-Screen (Pantalla Completa) */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[60] bg-white flex flex-col items-center justify-center p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center"
           >
-            <button 
-              className="absolute top-8 right-8 p-3 text-gray-400 hover:text-[#1A1A1A]"
-              onClick={() => setIsOpen(false)}
-            >
-              <X size={32} strokeWidth={1} />
-            </button>
-
-            <div className="flex flex-col gap-10 text-center">
+            <div className="flex flex-col gap-8 text-center">
               {menuItems.map((item, i) => (
                 <motion.div
                   key={item.name}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 + 0.2 }}
+                  transition={{ delay: i * 0.1 }}
                 >
                   <Link
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-4xl font-serif text-[#1A1A1A] hover:text-[#B22222] transition-colors"
+                    className="text-3xl font-serif text-[#1A1A1A] active:text-[#B22222]"
                   >
                     {item.name}
                   </Link>
                 </motion.div>
               ))}
-            </div>
-            
-            {/* Detalle decorativo al final del menú móvil */}
-            <div className="absolute bottom-12 text-gray-300 font-serif italic">
-              — El arte del trazo presente —
             </div>
           </motion.div>
         )}

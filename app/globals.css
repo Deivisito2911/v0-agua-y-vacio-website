@@ -139,3 +139,23 @@
     text-wrap: pretty;
   }
 }
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Ajuste para que el Header fijo no tape los títulos de sección al navegar */
+    scroll-padding-top: 5rem; 
+  }
+
+  body {
+    @apply antialiased text-[#1A1A1A] bg-white;
+    /* Evita el scroll horizontal accidental */
+    overflow-x: hidden; 
+  }
+}
+
+/* Evitar saltos de layout en móviles con la unidad svh */
+.min-h-screen {
+  min-h: 100vh;
+  min-h: 100svh;
+}
