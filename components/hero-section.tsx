@@ -6,25 +6,50 @@ import Image from 'next/image'
 interface HeroSectionProps {
   title: string
   subtitle?: string
-  imageSrc: string // Requerida para mantener la estética Zen
+  imageSrc?: string
+  videoSrc?: string // Nueva propiedad opcional para el video
+  imageAlt?: string
 }
 
-export function HeroSection({ title, subtitle, imageSrc }: HeroSectionProps) {
+export function HeroSection({
+  title,
+  subtitle,
+  imageSrc,
+  videoSrc,
+  imageAlt = 'Agua y Vacío Hero',
+}: HeroSectionProps) {
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-white">
-      {/* Background Layer - Optimización de imagen para Cloudinary */}
+      {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src={imageSrc}
-          alt="Atmósfera de Caligrafía China"
-          fill
-          priority
-          className="object-cover opacity-70" // Suavizamos la imagen para que el texto respire
-          sizes="100vw"
-          quality={90}
-        />
-        {/* Overlay Zen: Degradado suave que simula el papel de arroz */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white" />
+        {/* Renderizado de Video si existe */}
+        {videoSrc ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-60"
+          >
+            <source src={videoSrc} type="video/mp4" />
+          </video>
+        ) : null}
+
+        {/* Imagen de fondo / Fallback */}
+        {imageSrc && (
+          <Image
+            src={imageSrc}
+            alt={imageAlt}
+            fill
+            priority
+            // Si hay video, la imagen actúa como base de carga
+            className={`object-cover ${videoSrc ? 'opacity-30' : 'opacity-70'}`}
+            sizes="100vw"
+          />
+        )}
+        
+        {/* Overlay Zen para suavizar la transición y asegurar legibilidad */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white" />
       </div>
 
       {/* Content Layer */}
@@ -34,16 +59,14 @@ export function HeroSection({ title, subtitle, imageSrc }: HeroSectionProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
             duration: 1.4, 
-            ease: [0.22, 1, 0.36, 1], // "The Brush Stroke" ease
+            ease: [0.22, 1, 0.36, 1],
             delay: 0.2 
           }}
         >
-          {/* Título con tracking ajustado para elegancia */}
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-light tracking-tight text-[#1A1A1A] mb-8 leading-none">
             {title}
           </h1>
 
-          {/* Subtítulo con mayor interlineado para legibilidad */}
           {subtitle && (
             <motion.p
               initial={{ opacity: 0 }}
@@ -55,7 +78,7 @@ export function HeroSection({ title, subtitle, imageSrc }: HeroSectionProps) {
             </motion.p>
           )}
 
-          {/* Elemento decorativo: El sello (Rojo Carmesí) */}
+          {/* Sello Rojo Carmesí */}
           <motion.div 
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -71,7 +94,7 @@ export function HeroSection({ title, subtitle, imageSrc }: HeroSectionProps) {
         </motion.div>
       </div>
       
-      {/* Scroll Indicator minimalista */}
+      {/* Indicador de scroll sutil */}
       <motion.div 
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 2, repeat: Infinity }}

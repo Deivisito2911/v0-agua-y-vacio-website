@@ -1,4 +1,3 @@
-// Eliminamos 'use client' de aquí. La página ahora carga en el servidor.
 import { HeroSection } from '@/components/hero-section'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
@@ -12,13 +11,14 @@ export default function Home() {
     <main className="relative w-full bg-white">
       <Header />
       
-      {/* El ID ayuda al smooth scroll del Header */}
       <div id="inicio">
         <HeroSection
           title="Agua y Vacío"
           subtitle="El arte del trazo presente"
-          // Aquí usarás tu URL de Cloudinary
-          imageSrc="https://images.unsplash.com/photo-1537903904737-13fc0a7f1e1d?q=80&w=2070&auto=format&fit=crop"
+          // Si quieres usar video, pon la URL aquí. Si no, déjala vacía o bórrala.
+          videoSrc="https://res.cloudinary.com/dnwyno39r/video/upload/v1773584290/Agua_y_Vacio_1_1_jm9o3z.mp4" 
+          // imageSrc siempre servirá como fallback de alta calidad
+          //imageSrc="https://res.cloudinary.com/dnwyno39r/image/upload/v1765393580/samples/animals/kitten-playing.gif"
         />
       </div>
 

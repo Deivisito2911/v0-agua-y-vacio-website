@@ -4,16 +4,16 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 const contactSchema = z.object({
-  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  email: z.string().email('Por favor ingresa un email válido'),
-  subject: z.string().min(3, 'El asunto debe tener al menos 3 caracteres'),
-  message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
+  name: z.string().min(2, 'El nombre es necesario para iniciar el diálogo'),
+  email: z.string().email('Por favor, ingresa un email válido'),
+  subject: z.string().min(3, 'Indica el motivo de tu mensaje'),
+  message: z.string().min(10, 'Permíteme conocer un poco más tus necesidades'),
 })
 
 type ContactFormData = z.infer<typeof contactSchema>
@@ -40,135 +40,125 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
     setSubmitStatus('idle')
 
     try {
-      // Simulate form submission
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // In a real app, you would send this to an API endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1500))
       console.log('Form data:', data)
-
       setSubmitStatus('success')
       reset()
       onSuccess?.()
-
-      // Reset status after 3 seconds
-      setTimeout(() => setSubmitStatus('idle'), 3000)
+      setTimeout(() => setSubmitStatus('idle'), 4000)
     } catch (error) {
-      console.error('Error submitting form:', error)
       setSubmitStatus('error')
-      setTimeout(() => setSubmitStatus('idle'), 3000)
+      setTimeout(() => setSubmitStatus('idle'), 4000)
     } finally {
       setIsSubmitting(false)
     }
   }
 
+  // Estilo base para los inputs "Zen"
+  const inputClasses = "rounded-none border-0 border-b border-gray-200 bg-transparent px-0 py-4 focus-visible:ring-0 focus-visible:border-[#B22222] transition-all placeholder:text-[10px] placeholder:tracking-[0.3em] placeholder:text-gray-300 uppercase text-xs tracking-widest text-[#1A1A1A]"
+
   return (
     <motion.form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-2xl mx-auto space-y-6"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      className="w-full max-w-2xl mx-auto space-y-12"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 1 }}
     >
-      {/* Name field */}
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium mb-2 text-foreground">
-          Nombre
-        </label>
-        <Input
-          id="name"
-          placeholder="Tu nombre"
-          {...register('name')}
-          className={errors.name ? 'border-destructive' : ''}
-          disabled={isSubmitting}
-        />
-        {errors.name && (
-          <p className="text-sm text-destructive mt-1">{errors.name.message}</p>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {/* Nombre */}
+        <div className="flex flex-col">
+          <Input
+            placeholder="Nombre"
+            {...register('name')}
+            className={`${inputClasses} ${errors.name ? 'border-[#B22222]' : ''}`}
+            disabled={isSubmitting}
+          />
+          <AnimatePresence>
+            {errors.name && (
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] text-[#B22222] mt-2 tracking-wider italic uppercase">{errors.name.message}</motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Email */}
+        <div className="flex flex-col">
+          <Input
+            type="email"
+            placeholder="Email"
+            {...register('email')}
+            className={`${inputClasses} ${errors.email ? 'border-[#B22222]' : ''}`}
+            disabled={isSubmitting}
+          />
+          <AnimatePresence>
+            {errors.email && (
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] text-[#B22222] mt-2 tracking-wider italic uppercase">{errors.email.message}</motion.p>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Email field */}
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-2 text-foreground">
-          Email
-        </label>
+      {/* Asunto */}
+      <div className="flex flex-col">
         <Input
-          id="email"
-          type="email"
-          placeholder="tu@email.com"
-          {...register('email')}
-          className={errors.email ? 'border-destructive' : ''}
-          disabled={isSubmitting}
-        />
-        {errors.email && (
-          <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
-        )}
-      </div>
-
-      {/* Subject field */}
-      <div>
-        <label htmlFor="subject" className="block text-sm font-medium mb-2 text-foreground">
-          Asunto
-        </label>
-        <Input
-          id="subject"
-          placeholder="¿En qué puedo ayudarte?"
+          placeholder="Asunto"
           {...register('subject')}
-          className={errors.subject ? 'border-destructive' : ''}
+          className={`${inputClasses} ${errors.subject ? 'border-[#B22222]' : ''}`}
           disabled={isSubmitting}
         />
-        {errors.subject && (
-          <p className="text-sm text-destructive mt-1">{errors.subject.message}</p>
-        )}
+        <AnimatePresence>
+          {errors.subject && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] text-[#B22222] mt-2 tracking-wider italic uppercase">{errors.subject.message}</motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Message field */}
-      <div>
-        <label htmlFor="message" className="block text-sm font-medium mb-2 text-foreground">
-          Mensaje
-        </label>
+      {/* Mensaje */}
+      <div className="flex flex-col">
         <Textarea
-          id="message"
-          placeholder="Tu mensaje aquí..."
-          rows={5}
+          placeholder="Tu mensaje..."
+          rows={4}
           {...register('message')}
-          className={errors.message ? 'border-destructive' : ''}
+          className={`${inputClasses} ${errors.message ? 'border-[#B22222]' : ''} resize-none`}
           disabled={isSubmitting}
         />
-        {errors.message && (
-          <p className="text-sm text-destructive mt-1">{errors.message.message}</p>
-        )}
+        <AnimatePresence>
+          {errors.message && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] text-[#B22222] mt-2 tracking-wider italic uppercase">{errors.message.message}</motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Status messages */}
-      {submitStatus === 'success' && (
-        <motion.div
-          className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+      {/* Botón de envío con efecto de "Sello" */}
+      <div className="flex flex-col items-center pt-6">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="group relative overflow-hidden rounded-none bg-[#1A1A1A] hover:bg-[#B22222] text-white px-16 py-7 transition-all duration-700"
         >
-          ¡Mensaje enviado con éxito! Te contactaré pronto.
-        </motion.div>
-      )}
+          <span className="relative z-10 text-[10px] font-bold tracking-[0.4em] uppercase">
+            {isSubmitting ? 'Enviando...' : 'Enviar Correspondencia'}
+          </span>
+          <motion.div 
+            className="absolute inset-0 bg-[#B22222] translate-y-full group-hover:translate-y-0 transition-transform duration-500"
+          />
+        </Button>
 
-      {submitStatus === 'error' && (
-        <motion.div
-          className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          Hubo un error al enviar el mensaje. Por favor intenta nuevamente.
-        </motion.div>
-      )}
-
-      {/* Submit button */}
-      <Button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2 px-4 rounded transition-colors duration-200"
-      >
-        {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
-      </Button>
+        {/* Mensajes de Estado Flotantes */}
+        <AnimatePresence>
+          {submitStatus === 'success' && (
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              exit={{ opacity: 0 }}
+              className="mt-6 text-[11px] tracking-widest uppercase text-gray-500 italic"
+            >
+              El mensaje ha sido entregado. Gracias por tu paciencia.
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.form>
   )
 }

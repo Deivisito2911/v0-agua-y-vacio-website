@@ -8,12 +8,11 @@ import { Menu, X } from 'lucide-react'
 
 const menuItems = [
   { name: 'Inicio', href: '#inicio' },
-  { name: 'Sobre Mí', href: '#sobre-mi' },
+  { name: 'Sobre Mí', href: '#sobre-mi' }, // Cambiado a sin tilde para el ID
   { name: 'Obras', href: '#obras' },
   { name: 'Talleres', href: '#talleres' },
   { name: 'Contacto', href: '#contacto' },
 ]
-
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
